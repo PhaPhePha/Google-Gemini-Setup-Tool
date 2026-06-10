@@ -19,19 +19,24 @@ if errorlevel 1 (
 
 :MENU
 cls
-echo           %ESC%[94m____ _____ __  __ ___ _   _ ___
+echo    %ESC%[92mActive%ESC%[0m %ESC%[94m____ _____ __  __ ___ _   _ ___
 echo          / ___^| ____^|  \/  ^|_ _^| \ ^| ^|_ _^|
 echo         ^| ^|  _^|  _^| ^| ^|\/^| ^|^| ^|^|  \^| ^|^| ^|
 echo         ^| ^|_^| ^| ^|___^| ^|  ^| ^|^| ^|^| ^|\  ^|^| ^|
-echo          \____^|_____^|_^|  ^|_^|___^|_^| \_^|___^|%ESC%[0m
+echo          \____^|_____^|_^|  ^|_^|___^|_^| \_^|___^|%ESC%[0m v1.1.0
 echo.
 echo %ESC%[96m##################################################%ESC%[0m
-echo %ESC%[96m#%ESC%[0m            %ESC%[94mG%ESC%[0m%ESC%[91mo%ESC%[0m%ESC%[93mo%ESC%[0m%ESC%[94mg%ESC%[0m%ESC%[92ml%ESC%[0m%ESC%[91me%ESC%[0m %ESC%[94mGemini%ESC%[0m Setup Tool%ESC%[0m            %ESC%[96m#%ESC%[0m
+
+echo %ESC%[96m#%ESC%[0m            %ESC%[94mG%ESC%[0m%ESC%[91mo%ESC%[0m%ESC%[93mo%ESC%[0m%ESC%[94mg%ESC%[0m%ESC%[92ml%ESC%[0m%ESC%[91me%ESC%[0m %ESC%[94mGemini%ESC%[0m %ESC%[93mSetup Tool%ESC%[0m            %ESC%[96m#%ESC%[0m
+
+echo %ESC%[96m#%ESC%[0m         %ESC%[93mfor Xiaomi China ROM Devices%ESC%[0m           %ESC%[96m#%ESC%[0m
+
 echo %ESC%[96m#%ESC%[0m                 %ESC%[93mby PhaPhePha%ESC%[0m                   %ESC%[96m#%ESC%[0m
+
 echo %ESC%[96m##################################################%ESC%[0m
 echo.
-echo [1] Setup Google Assistant
-echo [2] Restore Xiaomi AI
+echo [1] Setup Google Gemini Assistant (via Power Button)
+echo [2] Restore Xiaomi Voice Assistant
 echo [3] Check Assistant Status
 echo [0] Exit
 echo.
@@ -65,10 +70,11 @@ adb devices
 adb devices | findstr "unauthorized" >nul
 if not errorlevel 1 (
 echo.
-echo  %ESC%[91m[ERROR] %ESC%[93mDevice unauthorized!%ESC%[0m
+echo  %ESC%[91m[ERROR] %ESC%[0mDevice unauthorized!
 echo.
 echo Please unlock your phone and allow USB debugging.
 echo.
+echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
 pause
 goto MENU
 )
@@ -76,13 +82,14 @@ goto MENU
 adb devices | findstr /R /C:".*device$" >nul
 if errorlevel 1 (
 echo.
-echo %ESC%[91m[ERROR] No device detected!%ESC%[0m
+echo %ESC%[91m[ERROR]%ESC%[0m No device detected!
 echo.
 echo Please:
 echo - Connect your phone via USB
 echo - Enable USB Debugging
 echo - Allow the RSA fingerprint prompt
 echo.
+echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
 pause
 goto MENU
 )
@@ -96,6 +103,7 @@ if errorlevel 1 (
     echo.
     echo %ESC%[91m[ERROR]%ESC%[0m Google App not installed!
     echo.
+    echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
     pause
     goto MENU
 )
@@ -105,7 +113,9 @@ echo [2/5] Granting microphone permission...
 adb shell pm grant com.google.android.googlequicksearchbox android.permission.RECORD_AUDIO
 
 if errorlevel 1 (
-echo FAILED!
+echo %ESC%[91mFAILED!%ESC%[0m
+echo.
+echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
 pause
 goto MENU
 )
@@ -117,7 +127,9 @@ echo [3/5] Setting Assistant on Power button...
 adb shell settings put global power_button_long_press 5
 
 if errorlevel 1 (
-echo FAILED!
+echo %ESC%[91mFAILED!%ESC%[0m
+echo.
+echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
 pause
 goto MENU
 )
@@ -132,7 +144,9 @@ for /f %%i in ('adb shell settings get global power_button_long_press') do set V
 echo Current value: %VALUE%
 
 if not "%VALUE%"=="5" (
-echo Verification failed!
+echo %ESC%[91mVerification failed!%ESC%[0m
+echo.
+echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
 pause
 goto MENU
 )
@@ -169,9 +183,9 @@ goto MENU
 
 :COMPLETE
 echo.
-echo ============================================
-echo                  %ESC%[92m[ACTIVATED]%ESC%[0m               
-echo ============================================
+echo %ESC%[92m============================================
+echo                 [ACTIVATED]               
+echo ============================================%ESC%[0m
 echo.
 echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
 pause
@@ -185,7 +199,7 @@ goto MENU
 :RESTORE
 cls
 echo %ESC%[93m============================================%ESC%[0m
-echo              %ESC%[96mRestore Xiaomi AI%ESC%[0m
+echo        %ESC%[96mRestore Xiaomi Voice Assistant%ESC%[0m
 echo %ESC%[93m============================================%ESC%[0m
 echo.
 
@@ -197,7 +211,9 @@ adb devices | findstr /R /C:".*device$" >nul
 if errorlevel 1 (
 echo.
 echo %ESC%[91m[ERROR]%ESC%[0m No device detected!
+
 echo.
+echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
 pause
 goto MENU
 )
@@ -209,7 +225,7 @@ echo.
 echo %ESC%[93mRestore failed!%ESC%[0m
 ) else (
 echo.
-echo %ESC%[92mXiaomi AI restored successfully!%ESC%[0m
+echo %ESC%[92mXiaomi Voice Assistant restored successfully!%ESC%[0m
 )
 
 echo.
@@ -232,34 +248,37 @@ echo Checking device...
 echo.
 adb devices
 
-for /f "delims=" %%i in ('adb shell getprop ro.product.model') do set MODEL=%%i
-for /f "delims=" %%i in ('adb shell getprop ro.build.version.release') do set ANDROID=%%i
-for /f "delims=" %%i in ('adb shell getprop ro.miui.ui.version.name') do set HYPEROS=%%i
-
-echo Device  : %MODEL%
-echo Android : %ANDROID%
-echo HyperOS  : %HYPEROS%
-echo.
-
 adb devices | findstr /R /C:".*device$" >nul
 if errorlevel 1 (
-echo.
+
 echo %ESC%[91m[ERROR]%ESC%[0m No device detected!
 echo.
+echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
 pause
 goto MENU
 )
 
+
+for /f "delims=" %%i in ('adb shell getprop ro.product.model') do set MODEL=%%i
+for /f "delims=" %%i in ('adb shell getprop ro.build.version.release') do set ANDROID=%%i
+for /f "delims=" %%i in ('adb shell getprop ro.miui.ui.version.name') do set HYPEROS=%%i
+
+echo %ESC%[91mDevice%ESC%[0m  : %MODEL%
+echo %ESC%[92mAndroid%ESC%[0m : %ANDROID%
+echo %ESC%[94mHyperOS%ESC%[0m  : %HYPEROS%
+echo.
+
+
 set VALUE=
 for /f %%i in ('adb shell settings get global power_button_long_press') do set VALUE=%%i
 
-echo Current value: %VALUE%
+echo %ESC%[93mCurrent value:%ESC%[0m %VALUE%
 echo.
 
 if "%VALUE%"=="5" (
 echo %ESC%[92m[ACTIVE]%ESC%[0m Google Gemini Assistant is enabled.
 ) else (
-echo %ESC%[91m[INACTIVE]%ESC%[0m Google Gemini Assistant is not enabled.
+echo %ESC%[91m[INACTIVE]%ESC%[0m Google Gemini Assistant is disabled.
 )
 
 echo.
