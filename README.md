@@ -71,8 +71,8 @@ Activation_google_gemini_assistant.bat
 ### On Linux/MacOS
 Grant executable permission and run the bash script:
 ```Bash
-chmod +x google_gemini_setup.sh
-./google_gemini_setup.sh
+chmod +x Activation_google_gemini_assistant.sh
+./Activation_google_gemini_assistant.sh
 ```
 
 You will see:
