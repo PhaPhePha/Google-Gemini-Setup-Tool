@@ -292,6 +292,13 @@ Use at your own risk. Always review the included ADB commands before running the
 
 ---
 
+## Download
+
+Download latest version here:
+[Releases](https://github.com/PhaPhePha/Google-Gemini-Setup-Tool/releases)
+
+---
+
 ## Author
 
 **PhaPhePha**
