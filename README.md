@@ -80,9 +80,10 @@ Activation_google_gemini_assistant.bat
 You will see:
 
 ```text
-[1] Enable Google Gemini (Long Press Power Button)
+[1] Setup Google Gemini Assistant (via Power Button)
 [2] Restore Xiaomi Voice Assistant
 [3] Check Assistant Status
+[4] About
 [0] Exit
 ```
 
