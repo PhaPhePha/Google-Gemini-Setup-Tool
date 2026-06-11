@@ -25,6 +25,10 @@ This tool automates the ADB commands required to enable Google Gemini on Xiaomi 
 
 ✔ Detect missing devices
 
+✔ Detect missing ADB installation
+
+✔ Detect Google App installation
+
 ---
 
 ## Requirements
@@ -90,21 +94,28 @@ You will see:
 This option will:
 
 1. Verify device connection
-2. Grant microphone permission:
+
+2. Verify Google App installation
+
+```cmd
+adb shell pm list packages | findstr "com.google.android.googlequicksearchbox"
+```
+
+3. Grant microphone permission:
 
 ```cmd
 adb shell pm grant com.google.android.googlequicksearchbox android.permission.RECORD_AUDIO
 ```
 
-3. Configure Power Button Assistant:
+4. Configure Power Button Assistant:
 
 ```cmd
 adb shell settings put global power_button_long_press 5
 ```
 
-4. Verify configuration
+5. Verify configuration
 
-5. Disable Xiaomi Voice Assistant:
+6. Disable Xiaomi Voice Assistant:
 
 ```cmd
 adb shell pm uninstall -k --user 0 com.miui.voiceassist
@@ -248,6 +259,20 @@ com.google.android.googlequicksearchbox
 
 ---
 
+### Permission Denied / SecurityException
+
+If activation fails with a permission-related error:
+
+Enable the following options in Developer Options:
+
+- USB Debugging
+- USB Debugging (Security Settings)
+- Install via USB
+
+Then run the tool again.
+
+---
+
 ## Known Limitation
 
 On some HyperOS versions, Google Gemini activation may be reset after a device reboot.
@@ -255,7 +280,7 @@ On some HyperOS versions, Google Gemini activation may be reset after a device r
 If this happens, simply run:
 
 ```text
-[1] Enable Google Gemini (Long Press Power Button)
+[1] Setup Google Gemini Assistant (via Power Button)
 ```
 
 again.
@@ -290,12 +315,30 @@ Use at your own risk. Always review the included ADB commands before running the
 
 ![Status](screenshots/status.png)
 
+### About
+
+![About](screenshots/about.png)
+
 ---
 
 ## Download
 
 Download latest version here:
 [Releases](https://github.com/PhaPhePha/Google-Gemini-Setup-Tool/releases)
+
+---
+
+## Changelog
+
+### v1.2.0
+
+- Added ADB detection before launch
+- Added Google App detection step
+- Expanded setup workflow from 5 steps to 6 steps
+- Fixed WRITE_SECURE_SETTINGS activation issues reported by users
+- Improved HyperOS permission error handling
+- Updated UI and version information
+- General stability improvements
 
 ---
 

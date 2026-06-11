@@ -23,7 +23,7 @@ echo    %ESC%[92mActive%ESC%[0m %ESC%[94m____ _____ __  __ ___ _   _ ___
 echo          / ___^| ____^|  \/  ^|_ _^| \ ^| ^|_ _^|
 echo         ^| ^|  _^|  _^| ^| ^|\/^| ^|^| ^|^|  \^| ^|^| ^|
 echo         ^| ^|_^| ^| ^|___^| ^|  ^| ^|^| ^|^| ^|\  ^|^| ^|
-echo          \____^|_____^|_^|  ^|_^|___^|_^| \_^|___^|%ESC%[0m v1.1.0
+echo          \____^|_____^|_^|  ^|_^|___^|_^| \_^|___^|%ESC%[0m v1.2.0
 echo.
 echo %ESC%[96m##################################################%ESC%[0m
 
@@ -38,12 +38,14 @@ echo.
 echo [1] Setup Google Gemini Assistant (via Power Button)
 echo [2] Restore Xiaomi Voice Assistant
 echo [3] Check Assistant Status
+echo [4] About
 echo [0] Exit
 echo.
 
-choice /c 1230 /n /m "Select an option: "
+choice /c 12340 /n /m "Select an option: "
 
-if errorlevel 4 exit
+if errorlevel 5 exit
+if errorlevel 4 goto ABOUT
 if errorlevel 3 goto CHECK
 if errorlevel 2 goto RESTORE
 if errorlevel 1 goto SETUP
@@ -64,7 +66,9 @@ echo        %ESC%[96mSetup Google Gemini Assistant%ESC%[0m
 echo %ESC%[93m============================================%ESC%[0m
 echo.
 
-echo [1/5] Checking device...
+
+
+echo %ESC%[96m[1/6]%ESC%[0m Device Check
 adb devices
 
 adb devices | findstr "unauthorized" >nul
@@ -95,60 +99,132 @@ goto MENU
 )
 
 echo.
-echo %ESC%[92mDevice detected successfully.%ESC%[0m
+echo %ESC%[92mDEVICE DETECTED SUCCESSFULLY!%ESC%[0m
+
+
+
+
+
+echo.
+echo.
+echo %ESC%[96m[2/6]%ESC%[0m Google App Check
 
 adb shell pm list packages | findstr "com.google.android.googlequicksearchbox" >nul
 
 if errorlevel 1 (
-    echo.
     echo %ESC%[91m[ERROR]%ESC%[0m Google App not installed!
+    echo.
+    echo Please install Google App first.
+    echo Package: com.google.android.googlequicksearchbox
+    echo.
+    echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
+    pause
+    goto MENU
+)
+echo %ESC%[92mGOOGLE APP DETECTED!%ESC%[0m
+
+
+
+
+
+
+
+echo.
+echo.
+echo %ESC%[96m[3/6]%ESC%[0m Permission Setup
+adb shell pm grant com.google.android.googlequicksearchbox android.permission.RECORD_AUDIO > temp.txt 2>&1
+
+findstr /C:"SecurityException" temp.txt >nul
+if not errorlevel 1 (
+    echo.
+    echo %ESC%[93m[WARNING]%ESC%[0m Unable to grant microphone permission automatically.
+    echo *Gemini may request microphone permission on first launch*
+    del temp.txt
+    echo.
+    goto STEP4
+)
+
+findstr /C:"Unknown package" temp.txt >nul
+if not errorlevel 1 (
+    echo %ESC%[91m[ERROR]%ESC%[0m Google App not found!
+    del temp.txt
     echo.
     echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
     pause
     goto MENU
 )
 
-echo.
-echo [2/5] Granting microphone permission...
-adb shell pm grant com.google.android.googlequicksearchbox android.permission.RECORD_AUDIO
-
-if errorlevel 1 (
-echo %ESC%[91mFAILED!%ESC%[0m
-echo.
-echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
-pause
-goto MENU
-)
+del temp.txt
 
 echo %ESC%[92mSUCCESS!%ESC%[0m
 echo.
 
-echo [3/5] Setting Assistant on Power button...
-adb shell settings put global power_button_long_press 5
 
-if errorlevel 1 (
-echo %ESC%[91mFAILED!%ESC%[0m
+
+
+:STEP4
 echo.
-echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
-pause
-goto MENU
+echo %ESC%[96m[4/6]%ESC%[0m Assistant Configuration
+
+adb shell settings put global power_button_long_press 5 > temp.txt 2>&1
+
+findstr /C:"SecurityException" temp.txt >nul
+
+if not errorlevel 1 (
+    echo.
+    echo %ESC%[91m[ERROR] Permission denied!%ESC%[0m
+    echo Please enable:
+    echo - USB debugging
+    echo - USB debugging ^(Security settings^)
+    echo - Install via USB
+    echo.
+    del temp.txt
+    echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
+    pause
+    goto MENU
 )
+
+findstr /C:"Exception occurred" temp.txt >nul
+if not errorlevel 1 (
+    echo.
+    echo %ESC%[91m[ERROR]%ESC%[0m Failed to modify system settings.
+    echo.
+    type temp.txt
+    del temp.txt
+    echo.
+    echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
+    pause
+    goto MENU
+)
+
+del temp.txt
 
 echo %ESC%[92mACTIVATED!%ESC%[0m
 echo.
 
-echo [4/5] Verifying setting...
+
+
+echo.
+echo %ESC%[96m[5/6]%ESC%[0m Configuration Verification
 set VALUE=
 for /f %%i in ('adb shell settings get global power_button_long_press') do set VALUE=%%i
 
 echo Current value: %VALUE%
 
 if not "%VALUE%"=="5" (
-echo %ESC%[91mVerification failed!%ESC%[0m
-echo.
-echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
-pause
-goto MENU
+    echo.
+    echo %ESC%[91mVerification failed!%ESC%[0m
+    echo.
+    echo Current value: %VALUE%
+    echo.
+    echo Possible causes:
+    echo - USB debugging ^(Security settings^) is disabled
+    echo - Your ROM does not allow changing this setting
+    echo - HyperOS reverted the value
+    echo.
+    echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
+    pause
+    goto MENU
 )
 
 echo %ESC%[92mVERIFIED!%ESC%[0m
@@ -156,8 +232,8 @@ echo.
 
 
 
-
-echo [5/5] Removing Xiaomi Voice Assistant...
+echo.
+echo %ESC%[96m[6/6]%ESC%[0m Xiaomi AI Removal
 
 adb shell pm uninstall -k --user 0 com.miui.voiceassist > temp.txt 2>&1
 
@@ -178,6 +254,8 @@ goto COMPLETE
 echo %ESC%[91mFAILED!%ESC%[0m
 type temp.txt
 del temp.txt
+echo.
+echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
 pause
 goto MENU
 
@@ -281,6 +359,28 @@ echo %ESC%[92m[ACTIVE]%ESC%[0m Google Gemini Assistant is enabled.
 echo %ESC%[91m[INACTIVE]%ESC%[0m Google Gemini Assistant is disabled.
 )
 
+echo.
+echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
+pause
+goto MENU
+
+
+
+
+:ABOUT
+cls
+echo %ESC%[93m============================================%ESC%[0m
+echo                    %ESC%[96mAbout%ESC%[0m
+echo %ESC%[93m============================================%ESC%[0m
+echo.
+echo %ESC%[96mGGeS Tool%ESC%[0m - %ESC%[94mG%ESC%[0m%ESC%[91mo%ESC%[0m%ESC%[93mo%ESC%[0m%ESC%[94mg%ESC%[0m%ESC%[92ml%ESC%[0m%ESC%[91me%ESC%[0m %ESC%[94mGemini%ESC%[0m %ESC%[93mSetup Tool%ESC%[0m 
+echo Version : %ESC%[93m1.2.0%ESC%[0m
+echo Author  : %ESC%[93mPhaPhePha%ESC%[0m
+echo.
+echo %ESC%[92mGitHub:%ESC%[0m
+echo https://github.com/PhaPhePha/Google-Gemini-Setup-Tool
+echo.
+echo %ESC%[93mDesigned for Xiaomi China ROM / HyperOS devices.%ESC%[0m
 echo.
 echo %ESC%[93mPress any key to return to the menu.%ESC%[0m
 pause
