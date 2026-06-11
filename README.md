@@ -160,7 +160,7 @@ or
 
 ```text
 [INACTIVE]
-Google Gemini is not enabled.
+Google Gemini is disabled.
 ```
 
 ---
