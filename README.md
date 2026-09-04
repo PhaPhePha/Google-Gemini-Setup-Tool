@@ -34,16 +34,15 @@ This tool automates the ADB commands required to enable Google Gemini on Xiaomi 
 ## Requirements
 
 ### Device Requirements
-
-- Xiaomi device
+- Xiaomi / Redmi / POCO device
 - HyperOS / MIUI China ROM
 - Google App installed
 - USB Debugging enabled
 
 ### PC Requirements
-
-- Windows 10 / Windows 11
-- ADB installed and added to PATH
+- **Windows**: Windows 10 / 11.
+- **Linux / macOS**: Bash shell environment.
+- ADB Tools (The Bash script will safely attempt to auto-install this for you if missing).
 
 Verify ADB installation:
 
@@ -55,26 +54,29 @@ adb version
 
 ## Enable USB Debugging
 
-1. Open **Settings**
-2. Go to **About Phone**
-3. Tap **OS Version** 7 times to enable Developer Options
-4. Open **Developer Options**
-5. Enable:
-
-- USB Debugging
-- USB Debugging (Security Settings) *(if available)*
-
-6. Connect device to PC
-7. Allow the RSA fingerprint prompt
+1. Open **Settings** ➔ **About Phone**.
+2. Tap **OS Version** (or **MIUI Version**) 7 times to unlock Developer Options.
+3. Go back to **Settings** ➔ **Additional Settings** ➔ **Developer Options**.
+4. Enable the following toggles:
+   - **USB Debugging**
+   - **USB Debugging (Security Settings)** *(Crucial for granting permissions via ADB)*
+5. Connect your device to the PC and allow the **RSA fingerprint authorization prompt** on your phone screen.
 
 ---
 
 ## Usage
 
-Run:
-
+### On Windows
+Run the interactive batch script:
 ```cmd
 Activation_google_gemini_assistant.bat
+```
+
+### On Linux/MacOS
+Grant executable permission and run the bash script:
+```Bash
+chmod +x Activation_google_gemini_assistant.sh
+./Activation_google_gemini_assistant.sh
 ```
 
 You will see:
@@ -194,14 +196,14 @@ System files remain untouched.
 
 ---
 
-## Safety
+## Safety & Reversibility
 
-This tool:
-
-- Does NOT unlock bootloader
-- Does NOT root the device
-- Does NOT modify system partitions
-- Does NOT erase user data
+This utility is completely safe:
+- Does NOT require an unlocked bootloader.
+- Does NOT require root access (su).
+- Does NOT alter system partition tables (read-only files stay safe).
+- Does NOT format user data.
+Everything altered can be perfectly reverted back to factory stock by choosing option [2] Restore Xiaomi AI (Xiao AI) within the script interface.
 
 All changes can be reverted using:
 
@@ -345,10 +347,10 @@ Download latest version here:
 
 ## Author
 
-**PhaPhePha**
 
-GitHub:
-https://github.com/PhaPhePha
+**PhaPhePha** - Original Windows Batch Script & Core Logic - [GitHub](https://github.com/PhaPhePha).
+
+**Vanphat111** - POSIX Bash Refactoring, Package Manager Auto-Installer - [GitHub](https://github.com/vanphat111).
 
 ---
 
